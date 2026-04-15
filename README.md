@@ -1,5 +1,7 @@
 # 2.6.0
 
+### 2.6.0 is currently live on the beta channel only
+
 ## New features
 
 * Automatic check for OTA updates with user notification. The check is performed once on startup and every hour after that.
