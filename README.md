@@ -1,13 +1,37 @@
 # 2.6.0
 
-### 2.6.0 is currently live on the beta channel only
-
 ## New features
 
+* Introduce the Motion component, `motion:0`, for reporting motion from the Wall Display XL's radar. There are a few options available for `Motion.SetConfig`: `motion_distance`,
+  `data_delta`, `blind_time`
+  * Example `Motion.GetStatus` response:
+
+```json
+{
+  "id": 0,
+  "motion": true
+}
+```
+
+* Introduce the Occupancy component, `occupancy:0`, for reporting the value of the proximity sensor. Said sensor is a read-only, binary one. Therefore, only the
+  `Occupancy.GetStatus` RPC method is available.
+  * Example `Occupancy.GetStatus` response:
+
+```json
+{
+  "id": 0,
+  "value": true
+}
+```
+
+* Introducing minimum brightness. `Ui.SetConfig` now accepts `brightness.min_value`. When auto brightness is enabled, screen brightness will never go below the provided value. Range: `[1..50]`
+* Introducing the option to extract a specific sensor for home page tiles to help with showing add-on sensors. Binary sensors (e.g. Door/Window) will continue to show their state. Relays will still be controllable.
 * Automatic check for OTA updates with user notification. The check is performed once on startup and every hour after that.
 * **X2i, XL and newer devices** — Added update log to the diagnostic zip file downloaded from the WebUI to help troubleshoot update problems.
 * **AppStore** for X2i, XL and newer models — browse, install, update, uninstall and run apps. Automatic check for app updates. Background apps are killed on resume/destroy.
 * **HomeAssistant** — for models supporting AppStore, the HomeAssistant page is deprecated. Please install HomeAssistant as a separate app.
+  * Notes on HA and becoming a Home app. We need to fight this because setting HA as a home app effectively bricks the device. Therefore we do not allow any other app than Stargate to be the home app. Opening HA settings and setting it as a Home app will have no effect.
+* **Auto-start last opened app** - if the device needs to perform a full reboot (power outage, etc.), while a 3-rd party app is running, this app will be automatically started. So, if for example HA was running in front and the device reboots, after Stargate starts, it will launch HA automatically.
 * **Fahrenheit support** — Please note that all values are saved internally in Celsius; Fahrenheit is only for display.
 * **Virtual Components** — Number, Text, Boolean, Enum and Group types. Allow creating, setting meta/value, RPC `Set` method, clickable booleans, `NotifyStatus` on value change.
 * **Thermostat** — New setting, "Sensor failure protection" — turn off the Thermostat and send a push notification upon sensor failure. Enabled by default.
@@ -83,9 +107,7 @@
 ```
 
 * Not (yet) supported in Scripts:
-  * HTTPServer
   * MQTT
-  * Virtual
 
 ## Improvements
 
