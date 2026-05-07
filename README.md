@@ -111,6 +111,7 @@
 
 ## Improvements
 
+* Updated home page item limit for XL, X2i and newer devices from 25 to 50;
 * Improved symmetricality on home page for portrait orientations; 
 * Refactored hardware key input handling — dynamic `/dev/input` device paths via `List<String>`, per-device monitoring threads;
 * Capture external key events from the overlay service;
