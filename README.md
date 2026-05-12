@@ -1,7 +1,5 @@
 # 2.6.0
 
-### 2.6.0-beta3 is now live on the beta channel for all models
-
 ## New features
 
 * Introduce the Motion component, `motion:0`, for reporting motion from the Wall Display XL's radar. There are a few options available for `Motion.SetConfig`: `motion_distance`,
