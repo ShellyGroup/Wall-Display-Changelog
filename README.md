@@ -1,3 +1,10 @@
+# 2.6.1
+
+## Fixes
+
+* Fix regression on legacy devices where the SW input would not be recognised while the screensaver is active.
+* Fix infinite loading with text "Restarting. Please wait..." when the device language is changed.
+
 # 2.6.0
 
 ## New features
