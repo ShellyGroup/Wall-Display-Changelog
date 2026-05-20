@@ -1,13 +1,68 @@
-# 2.6.1
+# GENERAL CONSIDERATIONS
 
-## Fixes
+# Device Generations
+
+Since 2.6.0 we started distinguishing the device models in two groups: `modern` and `legacy`.
+
+* `legacy` devices are the first devices, running Android 7, with very limited hardware capabilities.
+* `modern` devices are the new models, running Android 11 and above on 64-bit architectures.
+
+With their hardware constraints legacy devices have already started missing new features.
+The first such feature is the ability to run 3rd party apps;
+therefore, the app store is only supported on modern devices.
+At some future point those devices will eventually stop receiving updates.
+
+## Which are which?
+
+### Legacy devices, armeabi-v7a:
+
+| Model           | Codename | Name            |
+|-----------------|----------|-----------------|
+| SAWD-0A1XX10EU1 | Stargate | Wall Display    |
+| SAWD-2A1XX10EU1 | Pegasus  | Wall Display X2 |
+
+### Modern devices, arm64-v8a:
+
+| Model           | Codename | Name             |
+|-----------------|----------|------------------|
+| SAWD-3A1XE10EU2 | Blake    | Wall Display XL  |
+| SAWD-5A1XX10EU0 | Jenna    | Wall Display X2i |
+| SAWD-6A1XX10EU0 | Cally    | Wall Display X1i |
+| SAWD-4A1XE10US0 | Maverick | Wall Display U1  |
+| SAWD-6A0XX0EU0  | Dayna    | Wall Display D1  |
+
+# CHANGELOG
+
+## 2.6.2
+
+### Fixes
+
+* Fix ScreenSaver timeout being highjacked when no internal sensor is present (modern devices).
+  * **NOTE:** This feature, along with the forced lower screen brightness, was intended for legacy devices with internal temperature sensor where the screen heat would scramble
+    this sensor's readings.
+* Fix `Ui.ScreenSet?on=true` to restore the correct brightness level.
+* Fix `Ui.GetConfig` to report `brightness.level` as percent, as it should.
+* Fix an issue with the Thermostat where "Invert output" does not work as expected.
+* Fix auto brightness on X2i (and others).
+
+### New features
+
+* **Shelly Camera tiles** — Shelly Camera devices can now be favourited on the home page
+  and stream live video directly on the Wall Display. Tap a tile to open a fullscreen view
+  with audio. Honours camera privacy mode, offline state, and the device's streamer lifecycle
+  (starting / running / stopping / stopped). In lieu of the hardware differences explained
+  above, legacy devices' support for Shelly Camera is limited.
+
+## 2.6.1
+
+### Fixes
 
 * Fix regression on legacy devices where the SW input would not be recognised while the screensaver is active.
 * Fix infinite loading with text "Restarting. Please wait..." when the device language is changed.
 
-# 2.6.0
+## 2.6.0
 
-## New features
+### New features
 
 * Introduce the Motion component, `motion:0`, for reporting motion from the Wall Display XL's radar. There are a few options available for `Motion.SetConfig`: `motion_distance`,
   `data_delta`, `blind_time`
@@ -116,7 +171,7 @@
 * Not (yet) supported in Scripts:
   * MQTT
 
-## Improvements
+### Improvements
 
 * Updated home page item limit for XL, X2i and newer devices from 25 to 50;
 * Improved symmetricality on home page for portrait orientations; 
@@ -128,7 +183,7 @@
 * Save tile expanded state and restore it on startup;
 * Update WebUI interface;
 
-## Bug fixes
+### Bug fixes
 
 * Fixed restoring paired BLE sensor when restoring settings;
 * Fix large relay tiles and unregistered tile layouts;
@@ -139,11 +194,11 @@
 * Fix crash when BT speakers disconnected while playing and alarm interface is visible;
 * Fix homepage T/H/C values when enabling them; fix layout for X1, X1i and X2i when disabled;
 
-# 2.5.8
+## 2.5.8
 
 * Fix regression in thermostat schedules not turning the actuator on or off.
 
-# 2.5.7
+## 2.5.7
 
 * Fix layout in cases where editing items' resize buttons are hidden.
 * Added a "Close" button to close the alarm UI without stopping MediaPlayer.
@@ -151,7 +206,7 @@
 * Fixed thermostat logic for inverted outputs.
 * Introduced a popup asking the user to allow RPC communication over BLE.
 
-# 2.5.6
+## 2.5.6
 
 * Removed "Auto Advance Wizards" option. The wizard will now always auto-advance. Thus, the "Next" button was removed;
 * Fixed unregistered and large relay tile layouts;
@@ -159,7 +214,7 @@
 * Fixed restore brightness on `Ui.Screen.Set`;
 * Pause background running of WebView to avoid crashes on heavy HA dashboards.
 
-# 2.5.5
+## 2.5.5
 
 * Fix radio alarm not stopping when paused via RPC command;
 * Fix multi-channel roller commands in groups;
@@ -171,24 +226,24 @@
 * Fix popup dialog sizes for different screens;
 * Fix weather tile layout when no valid forecast has been downloaded.
 
-# 2.5.4
+## 2.5.4
 
 * Fix weather tile layout when no valid forecast has been downloaded;
 * Fix detached SW input actions in Thermostat mode;
 * Updated timezone information to 2025b;
 * Fixed the layout of X2 in landscape mode;
 
-# 2.5.3
+## 2.5.3
 
 * Added "Toggle relay state" to first items in gesture action selector;
 * More robust checking of WebView version for old X1 devices;
 
-# 2.5.2
+## 2.5.2
 
 * Further fix thermostat schedules not firing when needed after being overridden;
 * Fix "Turn screen off when idle" not working;
 
-# 2.5.1
+## 2.5.1
 
 * Exposed Android's Accessibility settings - high contrast text, invert colours, colour correction options, etc.;
 * Add convenience options for screen dim, screen off, and screensaver timeouts;
@@ -205,17 +260,17 @@
 * Fix SW input actions in different setups;
 * X2 now has two scrollers in portrait mode. Consequently, the thermostat is now on a separate page.
 
-# 2.4.5
+## 2.4.5
 
 * Fix MQTT connection problems.
 
-# 2.4.4
+## 2.4.4
 
 * Fix deleting saved WiFi networks when selected form the list, but not available;
 * XL portrait mode;
 * notifyInputEvent for XL buttons (1..4). Only `single_push` supported.
 
-# 2.4.3
+## 2.4.3
 
 * Fix Zendure tile saved expanded state, added more Zendure readings;
 * Fix TURN_ON, TURN_OFF, ROLLER_OPEN, and ROLLER_CLOSE group actions on XL side buttons;
@@ -228,17 +283,17 @@
 * Fix slider tapping without movement causing on/off sequence for non-on-off-devices (rollers);
 * Fix favourites reload on settings import.
 
-# 2.4.2
+## 2.4.2
 
 * Fix PV tile not updating when devices in your PV configuration exist as tiles on the home screen.
 
-# 2.4.1
+## 2.4.1
 
 * Fix crash caused by the new PV tile in certain conditions.
 
-# 2.4.0
+## 2.4.0
 
-## New features
+### New features
 
 * **Settings import/export** - This produces a zip file can then be used to restore the settings on any other Wall Display;
     - You can choose not to export your media library - this is particularly recommended for large libraries (>40MB)
@@ -251,7 +306,7 @@
       there;
 * **PV Configurations**. If you enabled and configured these in the app, you can add a tile to the home screen to view it real time;
 
-## Improvements
+### Improvements
 
 * Save tile expanded state so that when the device is restarted, they will retain their state;
 * Added support for the new style of device icons;
