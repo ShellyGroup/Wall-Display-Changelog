@@ -49,7 +49,7 @@ With that covered, let's dive into the changelog.
 
 ## 2.7.0
 
-### 2.7.0 is live on the beta channel. Please keep in mind that on modern devices, once you go to beta, you may not return to 2.6.3-stable.
+### 2.7.0 is live on the beta channel. Please keep in mind that on modern devices, once you go to beta, you may not return to 2.6.2-stable.
 
 ### New features
 
