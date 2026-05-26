@@ -31,7 +31,49 @@ At some future point those devices will eventually stop receiving updates.
 | SAWD-4A1XE10US0 | Maverick | Wall Display U1  |
 | SAWD-6A0XX0EU0  | Dayna    | Wall Display D1  |
 
+## Modern devices OTA Updates
+
+Please keep in mind that modern devices do not support downgrading. Therefore, if you opt to install a beta update, you may not go back to the stable until the same version is
+uploaded.
+
+## Legacy devices OTA Updates
+
+Since 2.6.2 the update requires to clear the device caches on legacy devices. Therefore, **Wall Display** and **Wall Display X2** will take **more time to boot the first time after
+an update**. Please keep that in mind, don't power-cycle it, it will come around.
+
+With that covered, let's dive into the changelog.
+
+---
+
 # CHANGELOG
+
+## 2.7.0
+
+### 2.7.0 is live on the beta channel. Please keep in mind that on modern devices, once you go to beta, you may not return to 2.6.3-stable.
+
+### New features
+
+* OTA update sanity check. After downloading the update, check if it's designed for this hardware and notify if not.
+* Additional dashboards! You can now opt to have more than one dashboard. 
+  * You can add a new dashboard from the `+` button on the main toolbar. 
+  * You can delete a dashboard from the top slide-out toolbar.
+  * For obvious reasons, the main dashboard can not be deleted.
+  * Regarding the different devices' hardware capabilities, the number of additional
+  dashboards is limited by device model, as follows:
+
+| Model           | Codename | Name             | Dashboards |
+|-----------------|----------|------------------|------------|
+| SAWD-3A1XE10EU2 | Blake    | Wall Display XL  | 5          |
+| SAWD-5A1XX10EU0 | Jenna    | Wall Display X2i | 3          |
+| SAWD-6A1XX10EU0 | Cally    | Wall Display X1i | 1          |
+| SAWD-4A1XE10US0 | Maverick | Wall Display U1  | 1          |
+| SAWD-6A0XX0EU0  | Dayna    | Wall Display D1  | 1          |
+| SAWD-0A1XX10EU1 | Stargate | Wall Display     | 1          |
+| SAWD-2A1XX10EU1 | Pegasus  | Wall Display X2  | 3          |
+
+### Fixes
+
+* Fixed thermostat refusing to start because of invalid actuator, when the actuator is actually valid.
 
 ## 2.6.2
 
@@ -91,6 +133,7 @@ At some future point those devices will eventually stop receiving updates.
 * Automatic check for OTA updates with user notification. The check is performed once on startup and every hour after that.
 * **X2i, XL and newer devices** — Added update log to the diagnostic zip file downloaded from the WebUI to help troubleshoot update problems.
 * **AppStore** for X2i, XL and newer models — browse, install, update, uninstall and run apps. Automatic check for app updates. Background apps are killed on resume/destroy.
+  * You can opt to have a separate "Apps" page on your Wall Display, with launchers for the apps you have installed. The option is in Settings -> Apps.
 * **HomeAssistant** — for models supporting AppStore, the HomeAssistant page is deprecated. Please install HomeAssistant as a separate app.
   * Notes on HA and becoming a Home app. We need to fight this because setting HA as a home app effectively bricks the device. Therefore we do not allow any other app than Stargate to be the home app. Opening HA settings and setting it as a Home app will have no effect.
 * **Auto-start last opened app** - if the device needs to perform a full reboot (power outage, etc.), while a 3-rd party app is running, this app will be automatically started. So, if for example HA was running in front and the device reboots, after Stargate starts, it will launch HA automatically.
@@ -100,13 +143,14 @@ At some future point those devices will eventually stop receiving updates.
   * Sensor failures include: Invalid readings, No readings for a long time.
 * **Scripting engine** (QuickJS) — `Shelly.call`, timers (`Timer.set`, `Timer.clear`, `Timer.getInfo`), `Shelly.addStatusHandler` / `Shelly.removeStatusHandler`,
   `Shelly.addEventHandler` / `Shelly.removeEventHandler`, BLE.
-* Notes on BLE:
+* **Important notes on BLE**:
   * In order to receive a BLE advertisement, the scanned device must be added to the Wall Display's BLE Observer list;
     * Unconditional scanning is heavy for the device, causes heating and may lead to degradation.
   * The scanner can NOT be started or stopped — it runs perpetually while BLE observer is enabled.
     * `BLE.SetConfig` is not allowed from scripts.
   * Scanner events include fully parsed BTHome data, if present in the advertisement;
     * Advertisements from encrypted devices will not be decrypted. The `advData` will still be there.
+    * A method to decrypt BLE advertisements with a user-provided passkey will be introduced in a future release.
   * Scanner events are deduped — only one event is delivered per unique advertisement payload.
   * The advertisement data will not contain binary strings, as opposed to mainstream Shelly devices.
   * Example event payload:
