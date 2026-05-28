@@ -49,10 +49,13 @@ With that covered, let's dive into the changelog.
 
 ## 2.7.0
 
-### 2.7.0 is live on the beta channel. Please keep in mind that on modern devices, once you go to beta, you may not return to 2.6.2-stable.
+### 2.7.0 is live on the beta channel. Please keep in mind that on modern devices, once you go to beta, you may not return to 2.6.2
 
 ### New features
 
+* Un-deprecated the HomeAssistant page. We understand that for some of you this feature is more useful than a separate app.
+    * Added the option to clear the WebView cache in Settings -> Home Assistant.
+    * **NOTE**: This will clear all the WebView data and you may need to log in again to all configured Home Assistant instances.
 * OTA update sanity check. After downloading the update, check if it's designed for this hardware and notify if not.
 * Additional dashboards! You can now opt to have more than one dashboard. 
   * You can add a new dashboard from the `+` button on the main toolbar. 
