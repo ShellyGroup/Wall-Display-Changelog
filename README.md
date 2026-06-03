@@ -16,15 +16,15 @@ At some future point those devices will eventually stop receiving updates.
 
 ### Legacy devices, armeabi-v7a:
 
-| Model           | Codename | Name            |
-|-----------------|----------|-----------------|
+| Model           | Name     | Market Name     |
+|:----------------|:---------|:----------------|
 | SAWD-0A1XX10EU1 | Stargate | Wall Display    |
 | SAWD-2A1XX10EU1 | Pegasus  | Wall Display X2 |
 
 ### Modern devices, arm64-v8a:
 
-| Model           | Codename | Name             |
-|-----------------|----------|------------------|
+| Model           | Name     | Market Name      |
+|:----------------|:---------|:-----------------|
 | SAWD-3A1XE10EU2 | Blake    | Wall Display XL  |
 | SAWD-5A1XX10EU0 | Jenna    | Wall Display X2i |
 | SAWD-6A1XX10EU0 | Cally    | Wall Display X1i |
@@ -49,10 +49,16 @@ With that covered, let's dive into the changelog.
 
 ## 2.7.0
 
-### 2.7.0 is live on the beta channel. Please keep in mind that on modern devices, once you go to beta, you may not return to 2.6.2
-
 ### New features
 
+* Modified the way the GATT server works when "RPC over BLE" is disabled and BLE Gateway is enabled. As the GATT
+  server is required to be running in order to keep the Bluetooth stack warmed up and the scanner to intercept BLE
+  advertisements without missing new packets, previously when an external sensor was connected or BLE Gateway was
+  enabled, the GATT server was always running and open for connections, regardless of the "RPC over BLE" setting
+  state, which contradicted the user's intent. Now, when the "RPC over BLE" options is disabled, this server will
+  still run, but will not be connectable. In other words, the device will still be visible to BLE scanners, but
+  you will not be able to connect to it.
+* Implemented `Ui.OpenCameraFullscreen` RPC method with params `{"id":"CAMERA_ID"}` to open a camera fullscreen view.
 * Un-deprecated the HomeAssistant page. We understand that for some of you this feature is more useful than a separate app.
     * Added the option to clear the WebView cache in Settings -> Home Assistant.
     * **NOTE**: This will clear all the WebView data and you may need to log in again to all configured Home Assistant instances.
@@ -64,19 +70,24 @@ With that covered, let's dive into the changelog.
   * Regarding the different devices' hardware capabilities, the number of additional
   dashboards is limited by device model, as follows:
 
-| Model           | Codename | Name             | Dashboards |
-|-----------------|----------|------------------|------------|
-| SAWD-3A1XE10EU2 | Blake    | Wall Display XL  | 5          |
-| SAWD-5A1XX10EU0 | Jenna    | Wall Display X2i | 3          |
-| SAWD-6A1XX10EU0 | Cally    | Wall Display X1i | 1          |
-| SAWD-4A1XE10US0 | Maverick | Wall Display U1  | 1          |
-| SAWD-6A0XX0EU0  | Dayna    | Wall Display D1  | 1          |
-| SAWD-0A1XX10EU1 | Stargate | Wall Display     | 1          |
-| SAWD-2A1XX10EU1 | Pegasus  | Wall Display X2  | 3          |
+| Model           | Name     | Market Name      | Dashboards | Max Tiles / Dashboard |
+|:----------------|:---------|:-----------------|:----------:|:---------------------:|
+| SAWD-3A1XE10EU2 | Blake    | Wall Display XL  |     5      |          50           |
+| SAWD-5A1XX10EU0 | Jenna    | Wall Display X2i |     3      |          50           |
+| SAWD-6A1XX10EU0 | Cally    | Wall Display X1i |     1      |          50           |
+| SAWD-4A1XE10US0 | Maverick | Wall Display U1  |     1      |          50           |
+| SAWD-6A0XX0EU0  | Dayna    | Wall Display D1  |     1      |          50           |
+| SAWD-0A1XX10EU1 | Stargate | Wall Display     |     1      |          25           |
+| SAWD-2A1XX10EU1 | Pegasus  | Wall Display X2  |     3      |          25           |
 
 ### Fixes
 
 * Fixed thermostat refusing to start because of invalid actuator, when the actuator is actually valid.
+
+### Improvements
+
+* Enralged the camera fullscreen view close and mute buttons and moved them from the edge for easier tapping.
+* Added a volume slider to the camera fullscreen view.
 
 ## 2.6.2
 
