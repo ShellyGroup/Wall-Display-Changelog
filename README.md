@@ -52,12 +52,14 @@ With that covered, let's dive into the changelog.
 ### New features
 
 * Modified the way the GATT server works when "RPC over BLE" is disabled and BLE Gateway is enabled. As the GATT
-  server is required to be running in order to keep the Bluetooth stack warmed up and the scanner to intercept BLE
+  server is required to be running in order to keep the Bluetooth stack warmed so that the scanner will intercept BLE
   advertisements without missing new packets, previously when an external sensor was connected or BLE Gateway was
   enabled, the GATT server was always running and open for connections, regardless of the "RPC over BLE" setting
   state, which contradicted the user's intent. Now, when the "RPC over BLE" options is disabled, this server will
   still run, but will not be connectable. In other words, the device will still be visible to BLE scanners, but
-  you will not be able to connect to it.
+  no one will be able to connect to it.
+  * This also further mitigates the vulnerability published by
+    [Pen Test Partners](https://www.pentestpartners.com/security-blog/shelly-wall-display-exposed-rpc-over-bluetooth/).
 * Implemented `Ui.OpenCameraFullscreen` RPC method with params `{"id":"CAMERA_ID"}` to open a camera fullscreen view.
 * Un-deprecated the HomeAssistant page. We understand that for some of you this feature is more useful than a separate app.
     * Added the option to clear the WebView cache in Settings -> Home Assistant.
@@ -120,6 +122,16 @@ With that covered, let's dive into the changelog.
 
 ### New features
 
+* Introduce BLE communication confirmation. When the device is connected to the home network,
+  every attempt to communicate with the device through RPC over BLE will result in a confirmation
+  dialog asking the user to approve the communication. If no action is taken within 15 seconds,
+  the request is denied.
+  * This entry was added on 2026-06-05 to retroactively document a fix that was already in place, following Pen Test Partners'
+    [public comments](https://www.pentestpartners.com/security-blog/shelly-wall-display-exposed-rpc-over-bluetooth/).
+    Because this version introduced a vast number of updates, this specific item was inadvertently missing from the
+    initial documentation. However, the accusation that it was deliberately masked is incorrect; that assertion was
+    based entirely on cherry-picking a single line a changelog that already detailed 31 distinct changes for this release.
+    It was simply a minor documentation omission in a highly complex update.
 * Introduce the Motion component, `motion:0`, for reporting motion from the Wall Display XL's radar. There are a few options available for `Motion.SetConfig`: `motion_distance`,
   `data_delta`, `blind_time`
   * Example `Motion.GetStatus` response:
