@@ -47,6 +47,33 @@ With that covered, let's dive into the changelog.
 
 # CHANGELOG
 
+## 2.7.1
+
+### New features
+
+* The Bluetooth stack is now managed automatically. The "Enable Bluetooth" setting and the `BLE.SetConfig`
+  `{"config":{"enable":...}}` RPC parameter are ignored; Bluetooth is turned on only when something actually
+  needs it and turned off otherwise. It is enabled when any of the following holds:
+    * the device is not registered to an account (so it can still be provisioned over BLE),
+    * an external sensor is paired,
+    * the BLE Gateway is enabled and has devices to relay,
+    * "RPC over BLE" is enabled,
+    * a Bluetooth speaker is paired/connected, or a BLE operation is in progress.
+  * The "Enable Bluetooth" toggle in Settings is now a read-only indicator of the current state; the
+    "RPC over BLE" and "BLE Gateway" sub-toggles remain interactive so they can be switched on while
+    Bluetooth is off.
+* An external sensor's readings reach the device through the BLE Gateway, so the two are now coupled and the
+  sensor's state is reported honestly through the Temperature and Humidity components:
+    * Disabling the BLE Gateway while an external sensor is in use warns you first that the sensor — and any
+      thermostat relying on it — will stop working; the choice is still yours.
+    * While the Gateway is disabled, both the Temperature and Humidity components report an error that the
+      external sensor's readings can not be reached (overriding any last cached value).
+    * When the Gateway is on but the sensor has not reported yet, they report a "no readings from external
+      sensor" error instead of a stale or placeholder value.
+* Improved BLE observation reliability: the scanner now uses aggressive match mode and reports every
+  advertisement, and the system is configured to always allow BLE scanning, so external-sensor and gateway
+  advertisements are picked up faster and more consistently.
+
 ## 2.7.0
 
 ### New features
