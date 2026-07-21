@@ -47,6 +47,17 @@ With that covered, let's dive into the changelog.
 
 # CHANGELOG
 
+## 2.7.2
+
+### Improvements
+
+* Uninstall all third party apps on factory reset.
+* Fixed the internal enumeration of the custom dashboard icons. Those icons are now saved more
+  consistently. As a result, after updating, your icons may be replaced. You can easily restore
+  them. If this happens, it will be only once.
+* Fixed Thermostat actuator selection for modern devices with more than one relay count.
+* Fixed the Blake radar `Motion` RPC namespace not being registered when the radar was already configured at startup.
+
 ## 2.7.1
 
 ### New features
