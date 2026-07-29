@@ -47,6 +47,17 @@ With that covered, let's dive into the changelog.
 
 # CHANGELOG
 
+## 2.7.3
+
+### Improvements
+
+* Idle Cloud connection - when your device shows a screensaver for a long time (1 minute for now),
+  it will decrease its network consumption by requesting that the Cloud reports statuses for select
+  devices only. Those are the Thermostat sensor and actuator and the main sensor you have chosen for
+  your dashboard and screensaver. This does not include your connected Blu H&T sensor; its readings
+  will still be transferred to the Cloud. The device's own status reports are still sent to the Cloud.
+  This new feature will help decrease your Wall Displays' network throughput.
+
 ## 2.7.2
 
 ### Improvements
