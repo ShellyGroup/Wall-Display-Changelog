@@ -47,6 +47,14 @@ With that covered, let's dive into the changelog.
 
 # CHANGELOG
 
+## 2.7.4
+
+### Improvements
+
+* We understand that for some of you the idle cloud update function looks like breaking the favourite
+  devices' connectivity. It is most noticeable when the screen saved has not been enabled. We're issuing
+  this fix for this particular reason - no idle cloud updates when no screensaver is active.
+
 ## 2.7.3
 
 ### Improvements
