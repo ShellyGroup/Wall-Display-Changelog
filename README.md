@@ -33,8 +33,13 @@ At some future point those devices will eventually stop receiving updates.
 
 ## Modern devices OTA Updates
 
-Please keep in mind that modern devices do not support downgrading. Therefore, if you opt to install a beta update, you may not go back to the stable until the same version is
-uploaded.
+Please keep in mind that until 2.8.0 modern devices did not support downgrading. Therefore, if you installed a beta update, you could not go back to the stable until
+a newer version was uploaded.
+
+Since 2.8.0 there is one way back: Settings -> Reset device -> "Uninstall all updates" returns the display to the software version it was shipped with. Your devices, rooms and
+settings are normally kept, though in rare cases Android resets them, so be ready to set the display up again. From there you can update again to whichever version you want.
+
+**N.B.:** Each display can return to only one version of the software, and which one depends on when it was manufactured.
 
 ## Legacy devices OTA Updates
 
@@ -45,7 +50,297 @@ With that covered, let's dive into the changelog.
 
 ---
 
+# LAST PUBLISHED VERSION
+
+| Stage  | Version |
+|:-------|:--------|
+| Stable | 2.7.4   |
+| Beta   | 2.8.0   |
+
 # CHANGELOG
+
+## 2.8.0
+
+### 2.8.0 is currently available on the Beta channel
+
+### New features
+
+* **Matter Controller** - your Wall Display can now act as a Matter controller, so you can add
+  Matter smart home devices directly to it and control them alongside your Shelly devices. This is
+  only available on modern devices.
+  * **Adding a device.** Enter the device's Matter setup code to commission it. If the device is
+    already on your Wi-Fi network you can add it straight away; otherwise the Wall Display will
+    guide it onto your network over Bluetooth for you.
+  * **Put it on your dashboard.** Once a device has been added, you can place it on your home
+    screen as a tile, right next to everything else, so there is no separate place to go to use it.
+    Depending on what the device is, you can:
+    * turn lights on and off, dim them, and change their colour;
+    * open, close, stop and set the position of covers, blinds and shades;
+    * adjust thermostats;
+    * start, pause, or dock a robot vacuum cleaner;
+    * start, stop, and set the cooking time on a microwave oven;
+    * control fans.
+  * **Sensors at a glance.** Matter sensors are shown on their own tiles, including temperature,
+    humidity, occupancy and air quality readings.
+  * **Recognisable devices.** Each device shows its manufacturer and an icon that matches what it
+    actually is, so your dashboard stays easy to read.
+  * **Managing your devices.** You can rename any Matter device to whatever makes sense to you, see
+    at a glance whether it is currently online or offline, and remove it from the controller when
+    you no longer need it.
+  * **Backed up with the rest of your settings.** A settings backup now carries your Matter side too -
+    the devices the display has commissioned and the credentials behind them - so a restore puts your
+    Matter setup back instead of leaving you to add every device again. Those credentials belong to one
+    physical display, though, so they are only put back on the display the backup was taken from:
+    restore it onto a different Wall Display and everything else comes back as usual while the Matter
+    part is left out, and the answer to the restore says which of the two happened. A backup from a
+    display that has never been set up for Matter has nothing Matter in it to begin with.
+  * **Cleared by a factory reset.** Resetting the display now also removes its Matter devices, its
+    credentials and the systems it had been added to, so a display you pass on or start over with does
+    not come back still holding the previous home's pairings.
+  * **Share with another Wall Display.** The Wall Display that holds your Matter devices can share them
+    with your other Wall Displays, so the same tiles work on all of them. On the one with the devices,
+    open Settings -> Network -> Matter devices and choose "Share my Matter devices"; it shows an 8-digit
+    code, valid for three minutes. On the other Wall Display, open the same screen, choose "Use another
+    Wall Display's devices", pick it from the list and type the code. From then on its Matter devices
+    appear and can be controlled there too, and you can stop the sharing at any time from either side.
+    * The screen you started from stays until the other Wall Display has paired, when the code disappears
+      and the newly paired Wall Display is listed - and it disappears again by itself when that Wall Display
+      stops using your devices.
+      * When you stop sharing with a Wall Display, it tidies itself up: it drops the connection and removes
+        the shared devices and their tiles, so it is not left showing controls it may no longer use. If it
+        was switched off at the time, it does that the next time it comes back and asks for something.
+      * A shared device works the same as it does on the Wall Display that owns it: as well as lights, you
+        can open, close, stop and position shared covers, blinds and shades, set shared fans, and adjust
+        shared thermostats. Its readings match too, live — including the power consumption of a device that
+        measures it.
+      * This works for **all** Wall Display models, including Wall Display and Wall Display X2, which can
+        not add Matter devices themselves — they can use the ones added on a newer model.
+      * Pairing is what lets another Wall Display find and follow your Matter devices, and a code can be
+        used once. Controlling a Matter device over the local API itself needs whatever your Wall Display
+        normally needs — its password, if you have set one — exactly like controlling its relay.
+      * The list stays in step by itself: a Matter device you add on the Wall Display that owns them shows up
+        within seconds on the ones sharing them, ready to be put on a dashboard there - no reboot needed. One
+        you remove there disappears from them just as promptly, even from those that were not showing it.
+  * **Use them in scripts.** Scripts have a new `Matter` object that presents your Matter devices as
+    ordinary Shelly components, so you write the same automation for a Matter bulb that you would for
+    a relay — `switch:0`, `light:0`, `cover:0`, `temperature:0` and so on, with `output`, brightness
+    in percent and temperatures in degrees, rather than Matter's endpoints and clusters.
+    * `Matter.list()` for what is commissioned, `Matter.getHandle( nodeId )` for a device (or
+      `Matter.getHandle( nodeId, endpointId )` for one channel of a multi-channel one), then
+      `getStatus()`, `getComponents()` and `getDeviceInfo()` to read it and `set()` / `toggle()` to
+      drive it. Reading takes no round trip: the values are already on the Wall Display.
+    * **Changes are pushed, not polled.** `handle.on( "change", … )` fires the moment a device
+      changes, with only the values that actually changed, so an automation reacts immediately
+      instead of asking on a timer; `handle.on( "removed", … )` fires if the device leaves. Matter
+      devices also now appear in the general `Shelly.addStatusHandler` feed, as `matter:<id>`.
+    * **Devices shared by another Wall Display work too**, both to read and to control — including on
+      Wall Display and Wall Display X2, which cannot add Matter devices of their own.
+    * **A metered plug reads as one thing.** Many plugs measure power on a separate Matter endpoint
+      from the outlet they switch. That reading is reported on the switch itself — `apower`, `voltage`
+      and `current` alongside `output`, exactly as a Shelly metered plug reports it — so an automation
+      reads a plug's consumption where it reads its state. A meter the device does not tie to any
+      particular outlet, such as a whole-house energy meter, is still reported on its own as `pm1:0`.
+    * **Every sensor reading reads as a Shelly reading.** An air quality monitor's CO2, particulates
+      and VOC, a barometer's pressure, a soil probe's moisture, a purifier's filter condition — each
+      now arrives as a component of its own, named after the reading, the same way a Shelly Weather
+      Station reports its pressure and wind. They are described by the same sensor table the display
+      uses for Shelly BLU devices, so the same reading looks the same whether it came over Bluetooth
+      or over Matter.
+    * **A reading is always in the unit its name implies.** Matter lets a device choose how it reports
+      a pollutant — one sensor sends parts per billion, another micrograms per cubic metre — so the
+      display converts, rather than passing on a number that means something different depending on
+      which sensor sent it. Where a conversion is not possible the reading is still reported, but
+      grouped and labelled with the unit it really came in, rather than quietly mislabelled.
+      A total VOC figure is converted the way the industry does it, as isobutylene equivalent.
+    * **Use a Matter device in other systems** - a device you added through the Wall Display can now be
+      added to other smart home systems as well, without removing it from the display first. Open the
+      device under Settings, Matter, Matter controller and choose "Use this device in other systems": the
+      display shows a pairing code, and Google Home, Apple Home, SmartThings or the manufacturer's own app
+      can add the same device with it. Both systems then control it side by side, which is what Matter
+      calls multi-admin. The code is made fresh each time and stops working after three minutes, so it is
+      not the code printed on the device's box and nothing is left open behind you. Offered only for
+      devices this display commissioned itself; one shared to you by another Wall Display has to be shared
+      from that display instead. Also available over RPC as `Matter.ShareDevice`.
+  * **Read one over RPC, in Shelly's own shape.** `Matter.GetNodeStatus` with a `node_id` answers a
+    Matter device's state as ordinary Shelly components — `switch:0`, `light:0`, `cover:0`,
+    `temperature:0`, with `output`, brightness in percent and temperatures in degrees — so an
+    integration reads a Matter bulb the same way it reads a relay, rather than translating Matter's
+    endpoints and clusters for itself. Add an `endpoint` to ask about one channel of a multi-channel
+    device. Offered for devices this display commissioned itself; for one shared to you by another Wall
+    Display, ask the display that owns it.
+  * **From the Shelly app, too (PREMIUM ONLY, TBA).** The Matter devices you have added to a Wall Display are now visible and
+    controllable through the cloud, so they sit alongside your other Shelly devices instead of only on the
+    panel in the hall. Each device carries a stable identifier of its own, so the app keeps track of which
+    is which even after you add or remove others.
+    * **They stay live in the app.** A Matter device that changes — someone turning a bulb on at the wall,
+      a plug that has been switched off, a device that has gone unreachable — says so straight away
+      instead of waiting for the app to ask again. Power, voltage and current follow a few seconds behind
+      rather than every second, since a plug measures itself continuously.
+      * On your own network, reading or controlling them still asks for the display's password or a Wall
+        Display pairing, exactly as before — worth setting a password if you have not.
+      * Finding and pairing with another Wall Display stays a local-network job. That is a conversation
+        between two panels in one home, and it is not offered over the internet.
+      * Matter devices are not exposed over MQTT at all, neither their state nor their controls: a broker is
+        somewhere you point the display at, and everyone listening on it is anonymous to the display.
+      * A Premium subscription is required to use this feature.
+      * **Thread devices** are not natively supported _(yet)_. For those you'll need their own hub
+        (e.g. Ikea's DIRIGERA). You can enable "Control from other systems" (or similar) on a device from their
+        app which will provide a Matter code to commission the device into your Wall Display.
+
+* **Matter Accessory** - your Wall Display can now be added to other smart home systems as a
+  Matter device in its own right, alongside being a Matter controller. This is only available on modern
+  devices.
+  * **What it offers them.** The relay output (both, on two-relay models) appears as a switch you
+    can turn on and off; a dimmer power supply appears as a dimmable light with a brightness
+    control; and if you have paired an external Shelly Blu H&T, its temperature and humidity appear
+    as sensors. The sensors come and go with the sensor itself, so they are only there when there is
+    something real behind them. A relay your room thermostat is using is not offered as a switch at
+    all, because it is the thermostat's to control, and if the thermostat reads the Blu H&T as well
+    then the temperature is shown once — on the thermostat — instead of twice. Humidity always
+    appears on its own, since a thermostat has nowhere to show it. Point the thermostat at some
+    other Shelly for its sensor and the Blu H&T's own temperature comes back as a separate sensor,
+    because then the two really are different readings.
+  * **Its presence sensor, too.** The sensor that wakes the screen when you walk up to the Wall
+    Display now also appears to the other system as an occupancy sensor, so you can use "somebody
+    is in this room" to drive automations there — lights, heating, a scene — without adding a
+    separate sensor to the room. Unlike the Blu H&T readings this one is always there, because the
+    sensor is part of the Wall Display. What it reports matches what the Wall Display itself acts
+    on: on the Wall Display XL, which senses with radar, presence clears a short time after the
+    room empties, while the other models clear it as soon as you step away.
+  * **Your room thermostat, too.** If you have the thermostat turned on, it appears as a thermostat
+    in the other system: it shows the current room temperature and whether it is calling for heat
+    (or cooling), and you can change the target temperature or switch it off from there, just as you
+    would on the Wall Display itself. Whichever way you change it, both sides stay in step.
+    Temperatures are set in half-degree steps, matching the dial on screen.
+    * Switching the thermostat between heating and cooling in Settings is picked up straight away,
+      with no need to re-add the Wall Display anywhere.
+    * A schedule that is currently running is what the other system sees and changes; setting a
+      temperature from there overrides today's schedule, exactly like turning the dial does.
+    * The relay driving your heating is not offered as a switch to another system while the
+      thermostat is using it — the same rule the Wall Display's own controls already follow, so
+      nothing can fight the thermostat. Point the thermostat at a different device and the relay
+      becomes a switch again straight away, with nothing to restart.
+    * A Wall Display with a room thermostat set up is added *as a thermostat*, rather than as a
+      switch that happens to have a thermostat attached to it.
+  * **Adding it.** The Wall Display shows a Matter pairing code that you enter in the other system.
+    It is discovered over your network, so the Wall Display and the system adding it need to be on
+    the same one; there is no Bluetooth pairing for this direction.
+  * **It arrives under its own name.** The other system shows the Wall Display by the name you gave
+    it in Settings — both in the list of devices it finds and once it has been added — rather than
+    inventing one of its own. Give it the name you want before you add it: a system remembers the
+    name it saw when it added the display and does not go back for a newer one. Rename the Wall
+    Display in the other system and that name stands; the Wall Display will not overwrite it.
+    The names of the individual switches are not sent, and cannot be — Matter leaves naming the
+    parts of a device to the system you added it to, so rename those there.
+  * **Several at once.** It can belong to more than one system at a time, and you can remove it from
+    any one of them without affecting the others.
+  * **Getting its credentials.** A Matter device has to prove which product it is before any system
+    will accept it, and that proof is unique to each unit. The Wall Display now fetches its own from
+    Shelly over the internet, so this is no longer something that has to happen during manufacturing.
+    It needs to be done once, from Settings, and the Wall Display restarts afterwards. Until it has
+    been done, the Wall Display will not offer itself to other systems at all — it will not present
+    an identity it cannot prove.
+  * **It says it is mains powered.** The Wall Display now tells the other system that it runs
+    from your mains supply, and that it has no battery at all. If a system still shows it as
+    having a battery — the IKEA Home app shows a critical one — that is the other system asking
+    a question the Wall Display has already answered, and the reading can be ignored.
+  * **Scenes.** The relay outputs and the dimmer can now be saved into scenes by the other
+    system and recalled from it, so the Wall Display's own outputs can take part in whatever
+    scenes you set up there alongside your other devices.
+  * **Certification is still under way for some models.** On the Wall Display X2i, X1i and D1 the
+    system you are adding the display to will warn you that it is not a certified Matter device -
+    SmartThings says so plainly, and the others each in their own words. Add it anyway: it is then
+    used exactly as a certified one would be. Certification is in progress, model by model, and a
+    future update carries it with nothing to re-pair.
+* **Rearrange your dashboards** - if you have more than one custom dashboard, hold its icon in the
+  bottom bar and drag it left or right to put your dashboards in the order you like.
+* **The tile limit now applies to each dashboard on its own** rather than being shared across all of
+  them, so every dashboard you add brings its full allowance with it. How many tiles one dashboard
+  holds still depends on the model:
+
+| Model           | Name     | Market Name      | Dashboards | Max Tiles / Dashboard |
+|:----------------|:---------|:-----------------|:----------:|:---------------------:|
+| SAWD-3A1XE10EU2 | Blake    | Wall Display XL  |     5      |          75           |
+| SAWD-5A1XX10EU0 | Jenna    | Wall Display X2i |     3      |          50           |
+| SAWD-6A1XX10EU0 | Cally    | Wall Display X1i |     1      |          50           |
+| SAWD-4A1XE10US0 | Maverick | Wall Display U1  |     1      |          50           |
+| SAWD-6A0XX0EU0  | Dayna    | Wall Display D1  |     1      |          50           |
+| SAWD-0A1XX10EU1 | Stargate | Wall Display     |     1      |          25           |
+| SAWD-2A1XX10EU1 | Pegasus  | Wall Display X2  |     3      |          25           |
+
+* **Uninstall all updates** - a modern Wall Display can now be taken back to the software version it was
+  shipped with. Open Settings -> Reset device and choose "Uninstall all updates": it tells you which
+  version you will land on, then restarts and comes back running it. Only the software goes back: your
+  devices, rooms, scenes and settings are normally kept, though in rare cases Android resets them, so it
+  is worth being ready to set the display up again. This is the way back if a newer version, or a beta,
+  does not suit you, since the newer models can not otherwise be sent an older version. That first
+  start after it takes longer than usual, and you can install updates again whenever you like. Also
+  available over the local API as `Shelly.UninstallAllUpdates`.
+
+### Improvements
+
+* Fixed updates refusing to install on a Wall Display that had been running for a long time. The
+  display keeps a diagnostic log, and it only ever started a fresh one when it restarted -- so a
+  display left on for months wrote one file that simply kept growing, on at least one occasion past a
+  gigabyte. That eventually left too little free space for an update to unpack, and the update
+  failed. The log is now capped and continues into a new file whenever it fills, old ones are
+  cleared away by themselves, and an update that is still short of space clears them first and
+  tells you plainly if it cannot go ahead.
+* Fixed tiles disappearing from your dashboards after a restart. The limit on how many tiles you could
+  have was counted across every dashboard at once, but only checked against the dashboard you were
+  adding to -- so the Wall Display accepted tiles it would later throw away, and the ones over the
+  count were quietly dropped the next time it started up. Anyone who filled a second dashboard could
+  meet this. The limit now means the same thing in both places, so a tile you have placed stays where
+  you put it.
+* Kept your upper-row tiles when you turn a Wall Display X2i or X2 on its side. Landscape has room for
+  only one row of tiles -- the lower one -- and the tiles on the upper row used to be thrown away to make
+  way: on the first dashboard they were gone for good, and on the others they simply stopped appearing
+  while still counting towards that dashboard's limit, which could leave you unable to add a music tile
+  anywhere because an unreachable one already existed. They are now moved to the end of the row that
+  remains instead, so nothing is lost and nothing is left stranded.
+* Fixed a script that watched more than one thing going deaf. Removing a single status or event
+  handler cancelled the script's updates altogether, so every other handler it had set up stopped
+  receiving anything until the script was restarted. Updates now stop only once the last handler for
+  that script is removed.
+* Fixed a crash that could restart the Wall Display over and over when Sonos speakers were on your
+  network.
+* Losing power at the wrong moment no longer wipes what the Wall Display had saved. Settings were
+  written straight over the top of the previous copy, so a power cut while one was being saved could
+  leave the file empty and take your devices, rooms, scenes or groups with it. Each file is now written
+  alongside the old one and swapped in only once it is safely stored, so an interrupted save costs you
+  that one change instead of the lot.
+* Fixed the Wall Display using up your account's cloud connections until nothing could reach the cloud
+  any more. Each time it rebuilt its cloud connections it could leave some of the previous ones behind,
+  still open but no longer accounted for, and the number crept up until the account reached its limit.
+  The cloud then began turning new connections away, and because the display responded by trying again
+  at once and opening still more, it stayed locked out. That allowance is shared across your account, so
+  one display doing this could take the cloud away from your other Wall Displays and from the Shelly app
+  too. Connections are now closed properly before being replaced, and a display that is turned away waits
+  before trying again -- a little longer each time, and deliberately out of step with your other displays,
+  so they no longer all rush back at the same moment.
+* Fixed the screensaver's temperature and humidity freezing when they come from another Shelly device.
+  While the screensaver is up the Wall Display asks the cloud for only the few devices it still needs --
+  the sensor whose reading is on the screensaver, and anything a room thermostat is regulating with. If a
+  cloud connection was then re-established, which happens on its own, the new one was never told what to
+  send, so nothing arrived at all: the reading on the screensaver stayed at whatever it was, and a
+  thermostat using a separate sensor stopped hearing from it, until the screen was touched. The
+  replacement connection is now given the same list. The reading also keeps up now when the sensor you
+  picked is one channel of a multi-channel device.
+* Fixed a room thermostat with a schedule holding the room at the wrong target after a long power cut.
+  A Wall Display that has been off long enough loses track of the time, and nothing was setting it
+  right again at startup, so the thermostat went on to apply whichever of your schedules that wrong
+  time pointed at. It now asks for the time as soon as it is back on your network, and a thermostat
+  with schedules waits for that before it starts. A thermostat without schedules is unaffected -- it
+  goes by temperature alone and starts as it always did.
+* Fixed changing the time server being able to bring up the error screen. If the server you gave it
+  could not be reached, the Wall Display quietly stopped being able to ask for the time at all, and the
+  next attempt -- yours or its own -- crashed instead of failing. It now reports that it could not
+  reach the server and carries on, so you can simply try another one.
+* Fixed not being able to pause a cover part-way. While a cover is moving, the button in the direction
+  it is travelling turns into a pause button -- but whether it could be pressed at all was decided by
+  the cover's position alone, so once the cover reported itself at the end it was heading for, the
+  pause was greyed out and your only choices were to let it finish or to send it back the other way.
+  The pause now stays available for as long as the cover is moving.
 
 ## 2.7.4
 
@@ -129,15 +424,15 @@ With that covered, let's dive into the changelog.
   * Regarding the different devices' hardware capabilities, the number of additional
   dashboards is limited by device model, as follows:
 
-| Model           | Name     | Market Name      | Dashboards | Max Tiles / Dashboard |
-|:----------------|:---------|:-----------------|:----------:|:---------------------:|
-| SAWD-3A1XE10EU2 | Blake    | Wall Display XL  |     5      |          50           |
-| SAWD-5A1XX10EU0 | Jenna    | Wall Display X2i |     3      |          50           |
-| SAWD-6A1XX10EU0 | Cally    | Wall Display X1i |     1      |          50           |
-| SAWD-4A1XE10US0 | Maverick | Wall Display U1  |     1      |          50           |
-| SAWD-6A0XX0EU0  | Dayna    | Wall Display D1  |     1      |          50           |
-| SAWD-0A1XX10EU1 | Stargate | Wall Display     |     1      |          25           |
-| SAWD-2A1XX10EU1 | Pegasus  | Wall Display X2  |     3      |          25           |
+| Model           | Name     | Market Name      | Dashboards | Max Tiles (Total) |
+|:----------------|:---------|:-----------------|:----------:|:-----------------:|
+| SAWD-3A1XE10EU2 | Blake    | Wall Display XL  |     5      |        50         |
+| SAWD-5A1XX10EU0 | Jenna    | Wall Display X2i |     3      |        50         |
+| SAWD-6A1XX10EU0 | Cally    | Wall Display X1i |     1      |        50         |
+| SAWD-4A1XE10US0 | Maverick | Wall Display U1  |     1      |        50         |
+| SAWD-6A0XX0EU0  | Dayna    | Wall Display D1  |     1      |        50         |
+| SAWD-0A1XX10EU1 | Stargate | Wall Display     |     1      |        25         |
+| SAWD-2A1XX10EU1 | Pegasus  | Wall Display X2  |     3      |        25         |
 
 ### Fixes
 
