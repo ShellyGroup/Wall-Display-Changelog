@@ -37,7 +37,10 @@ Please keep in mind that until 2.8.0 modern devices did not support downgrading.
 a newer version was uploaded.
 
 Since 2.8.0 there is one way back: Settings -> Reset device -> "Uninstall all updates" returns the display to the software version it was shipped with. Your devices, rooms and
-settings are normally kept, though in rare cases Android resets them, so be ready to set the display up again. From there you can update again to whichever version you want.
+settings are normally kept, though in rare cases Android resets them, so be ready to set the display up again. A display shipped with a version older than 2.6.2 is always
+reset to factory defaults on the way back, because those versions came out before some of today's devices and features, such as cameras, and cannot load them;
+it says so before you confirm and suggests saving a configuration backup first. From there you can update again
+to whichever version you want.
 
 **N.B.:** Each display can return to only one version of the software, and which one depends on when it was manufactured.
 
@@ -54,14 +57,12 @@ With that covered, let's dive into the changelog.
 
 | Stage  | Version |
 |:-------|:--------|
-| Stable | 2.7.4   |
-| Beta   | 2.8.0   |
+| Stable | 2.8.0   |
+| Beta   | none    |
 
 # CHANGELOG
 
 ## 2.8.0
-
-### 2.8.0 is currently available on the Beta channel
 
 ### New features
 
@@ -74,12 +75,20 @@ With that covered, let's dive into the changelog.
   * **Put it on your dashboard.** Once a device has been added, you can place it on your home
     screen as a tile, right next to everything else, so there is no separate place to go to use it.
     Depending on what the device is, you can:
-    * turn lights on and off, dim them, and change their colour;
+    * turn lights on and off, dim them, and change their colour or their shade of white. A light that does
+      both has two buttons on its tile, one for colour and one for white, and the tile opens on whichever
+      the light is using at the moment;
     * open, close, stop and set the position of covers, blinds and shades;
-    * adjust thermostats;
+    * adjust thermostats and air conditioners, and switch air conditioners on and off. Thermostats can be
+      switched on and off by tapping their tiles too, once "Allow turning thermostats on or off" is turned on
+      in Settings -> General;
     * start, pause, or dock a robot vacuum cleaner;
     * start, stop, and set the cooking time on a microwave oven;
     * control fans.
+
+    Bridges and hubs, such as IKEA's DIRIGERA or the Philips Hue Bridge, do not offer "Use default layout":
+    a single tile for everything behind the hub would be of no use, so each of its devices gets a tile of
+    its own.
   * **Sensors at a glance.** Matter sensors are shown on their own tiles, including temperature,
     humidity, occupancy and air quality readings.
   * **Recognisable devices.** Each device shows its manufacturer and an icon that matches what it
@@ -88,12 +97,13 @@ With that covered, let's dive into the changelog.
     at a glance whether it is currently online or offline, and remove it from the controller when
     you no longer need it.
   * **Backed up with the rest of your settings.** A settings backup now carries your Matter side too -
-    the devices the display has commissioned and the credentials behind them - so a restore puts your
-    Matter setup back instead of leaving you to add every device again. Those credentials belong to one
-    physical display, though, so they are only put back on the display the backup was taken from:
-    restore it onto a different Wall Display and everything else comes back as usual while the Matter
-    part is left out, and the answer to the restore says which of the two happened. A backup from a
-    display that has never been set up for Matter has nothing Matter in it to begin with.
+    the devices the display has commissioned, the credentials behind them and its pairings with your
+    other Wall Displays - so a restore puts your Matter setup back instead of leaving you to add every
+    device and share them all over again. Those credentials belong to one physical display, though, so
+    they are only put back on the display the backup was taken from: restore it onto a different Wall
+    Display and everything else comes back as usual while the Matter part is left out, and the answer
+    to the restore says which of the two happened. A backup from a display that has never been set up
+    for Matter has nothing Matter in it to begin with.
   * **Cleared by a factory reset.** Resetting the display now also removes its Matter devices, its
     credentials and the systems it had been added to, so a display you pass on or start over with does
     not come back still holding the previous home's pairings.
@@ -272,10 +282,18 @@ With that covered, let's dive into the changelog.
   shipped with. Open Settings -> Reset device and choose "Uninstall all updates": it tells you which
   version you will land on, then restarts and comes back running it. Only the software goes back: your
   devices, rooms, scenes and settings are normally kept, though in rare cases Android resets them, so it
-  is worth being ready to set the display up again. This is the way back if a newer version, or a beta,
+  is worth being ready to set the display up again. The exception is a display shipped with a version
+  older than 2.6.2: those versions came out before some of today's devices and features, such as
+  cameras, and cannot load them, so it is reset to factory defaults as well, and the confirmation says so before anything happens and suggests saving a configuration backup first. This is the way back if a newer version, or a beta,
   does not suit you, since the newer models can not otherwise be sent an older version. That first
   start after it takes longer than usual, and you can install updates again whenever you like. Also
   available over the local API as `Shelly.UninstallAllUpdates`.
+* **Camera talkback** - open a camera in fullscreen and hold the microphone button to speak through the
+  camera's own speaker; let go and you are listening again. The camera's sound is muted while you talk, so the
+  two ends do not feed back into one another, and an on-screen indicator shows whenever the microphone is
+  actually recording. It is unavailable on a camera that is in privacy mode, and on a Wall Display without a
+  microphone. It needs a camera whose firmware supports it: on one that does not, the camera is shown exactly
+  as before and simply has no microphone button.
 
 ### Improvements
 
@@ -336,11 +354,62 @@ With that covered, let's dive into the changelog.
   could not be reached, the Wall Display quietly stopped being able to ask for the time at all, and the
   next attempt -- yours or its own -- crashed instead of failing. It now reports that it could not
   reach the server and carries on, so you can simply try another one.
-* Fixed not being able to pause a cover part-way. While a cover is moving, the button in the direction
-  it is travelling turns into a pause button -- but whether it could be pressed at all was decided by
-  the cover's position alone, so once the cover reported itself at the end it was heading for, the
-  pause was greyed out and your only choices were to let it finish or to send it back the other way.
-  The pause now stays available for as long as the cover is moving.
+* Fixed the Wall Display not telling you about a newer beta once you are on one. It watched only for
+  stable releases, so a display running a beta heard about the next stable version and about nothing
+  in between -- to pick up a newer beta you had to go looking for it yourself under Settings, Check
+  for update. It now follows whichever kind of release you are already on: a display on a beta is
+  offered the next beta as well as the stable release that replaces it, while a display on a stable
+  release is still only ever offered stable ones.
+* Fixed a thermostat's tile jumping back to the old target after you changed it with the + and -
+  buttons or the slider. A thermostat answers a new target with the one it already had, and a Blu TRV keeps doing so
+  for several seconds, until it has woken up and turned its valve. The tile took each of those answers
+  at face value, so it showed your old target again until the new one arrived, as if the change had not
+  been accepted. It now keeps the target you chose until the thermostat reports it, and goes back to
+  what the thermostat reports if it has not done so within 40 seconds. This also fixes a change being
+  lost altogether: the new target is sent a second after your last tap, and if the thermostat reported
+  anything in that second, its old target was sent instead of yours. The slider now also follows the
+  + and - buttons as you tap them, instead of staying where it was.
+* Fixed Bluetooth devices going unrecognised when a Shelly BLE gateway reports their addresses with a
+  type marker added at the end (for example `aa:bb:cc:11:22:33.b`). Newer gateway firmware does this.
+  A BLU TRV tile could lose the readings of its paired BLU sensors, and the display refused to relay a
+  Bluetooth device whose address came with such a marker. The marker is now ignored and only the
+  address itself is used.
+* Fixed the Wall Display's own tile turning into a thermostat when the room thermostat is enabled.
+  While the thermostat was on, the tile gained a target temperature slider and showed the target as
+  its reading, and it went back to normal each time the thermostat was switched off. The tile now
+  stays what it is -- a switch, a sensor or a dimmer -- whether the thermostat is on or off, and the
+  thermostat is on the thermostat page, and on its own tile if you have added one.
+* Fixed the tile of another Wall Display's thermostat losing its target slider. It had none while the
+  thermostat was off, got one when the thermostat was switched on, and then kept it after the
+  thermostat was switched off again. The slider is now always there, and while the thermostat is off
+  the slider and its + and - buttons are greyed out.
+* Fixed a swipe across a tile being taken for a long press or a tap. A swipe that stayed inside the
+  tile for about half a second started editing the tiles, when holding a tile to edit them is turned
+  on, and one that ended inside the tile could switch the device. Once your finger moves, the tile
+  now waits for the next touch.
+* Fixed the Wall Display restarting on its own as it woke up. When the motion sensor or one of the
+  buttons woke the display from the screen saver or from a dark screen, the display stopped watching
+  the sensor and buttons just as another reading from them could be arriving, and if one did, the app
+  crashed and restarted. Waking up no longer takes that reading away.
+* Fixed a tile forgetting which reading it was set to show. If you picked a particular reading for a
+  device's tile when you added it, opening or closing the tile's extra controls threw that choice
+  away, and the tile went back to its default reading. The tile now keeps the reading you chose.
+* Fixed the screensaver's offline indicator not following the connection. When the Wall Display lost
+  or regained its connection to the cloud while the screensaver was up, the indicator stayed as it
+  was until something else on the screensaver changed, so it could show the display as offline when
+  it was back, or as connected when it was not. It now changes the moment the connection does.
+* Fixed actions on a second relay or input never running. On models with two relays or two inputs, an
+  action set up for the second one -- `switch:1` turning on or off, `input:1` toggling -- did not run
+  when that relay or input changed, and the matching action on the first one ran in its place. Each
+  action now runs for its own relay or input only.
+* Camera streams no longer restart on a momentary network hiccup. A brief interruption used to tear the
+  stream down and reconnect it from scratch; now the picture is held for a few seconds and only a
+  connection that really has gone away is re-established.
+* Camera video on the newer models is now decoded by the display's video hardware rather than by the
+  processor. The first Wall Displays have a faulty hardware decoder and go on using the processor, as they
+  must, but the newer models had been doing the same for no reason. This hands the work to the chip built
+  for it and leaves the processor free for everything else the display is doing, which tells most with
+  several camera tiles on screen at once or one of them in fullscreen.
 
 ## 2.7.4
 
