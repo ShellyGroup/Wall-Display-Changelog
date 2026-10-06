@@ -57,10 +57,31 @@ With that covered, let's dive into the changelog.
 
 | Stage  | Version |
 |:-------|:--------|
-| Stable | 2.8.0   |
+| Stable | 2.8.1   |
 | Beta   | none    |
 
 # CHANGELOG
+
+## 2.8.1
+
+### Fixes
+
+* **Camera talkback** - the Wall Display's microphone stayed on for as long as a camera that supports talkback was
+  open in fullscreen, even when the microphone button was not held, and the on-screen indicator did not show it. The
+  microphone now records only while you hold the button. What it picked up while the button was not held did not
+  go anywhere: it was not sent to the camera or stored.
+* **Another Wall Display's relay** - a tile for another Wall Display's relay could not switch it while that display's
+  thermostat was on, even when the thermostat drives a different device's relay and this one is free. Such a tile now
+  switches the relay. A relay that the thermostat itself drives still shows as a reading, as before.
+
+  The relay tile is now for the relay only and no longer carries the thermostat. To control another Wall Display's
+  thermostat from this one:
+  1. In the Shelly Smart Control app, open the other Wall Display and choose "Extract thermostat extension". This
+     makes its thermostat a device of its own.
+  2. On this Wall Display, add that new thermostat device to your home screen as a tile.
+
+  The thermostat tile sets the target temperature, and it can also switch the thermostat on and off once "Allow
+  turning thermostats on or off" is turned on in Settings -> General.
 
 ## 2.8.0
 
