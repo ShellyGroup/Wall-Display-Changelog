@@ -81,7 +81,9 @@ With that covered, let's dive into the changelog.
     * open, close, stop and set the position of covers, blinds and shades;
     * adjust thermostats and air conditioners, and switch air conditioners on and off. Thermostats can be
       switched on and off by tapping their tiles too, once "Allow turning thermostats on or off" is turned on
-      in Settings -> General;
+      in Settings -> General. A tile using "Use default layout" switches everything on the device together,
+      so on a device that has both a relay and a thermostat, such as another Wall Display, that setting
+      decides whether a tap switches the thermostat along with the relay or the relay alone;
     * start, pause, or dock a robot vacuum cleaner;
     * start, stop, and set the cooking time on a microwave oven;
     * control fans.
