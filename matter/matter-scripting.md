@@ -7,7 +7,7 @@ hundredths of a degree.
 
 The mapping from Matter to components is the same one the dashboard tiles use, so a script and a tile can
 never disagree about what a device is. What it maps *from* is the set of control shapes detected on each
-endpoint when the device was added — see [matter.md](matter.md#what-kinds-of-device-work).
+endpoint when the device was added — see [README.md](README.md#what-kinds-of-device-work).
 
 ## Contents
 
