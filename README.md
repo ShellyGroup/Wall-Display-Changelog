@@ -57,10 +57,31 @@ With that covered, let's dive into the changelog.
 
 | Stage  | Version |
 |:-------|:--------|
-| Stable | 2.8.1   |
+| Stable | 2.8.2   |
 | Beta   | none    |
 
 # CHANGELOG
+
+## 2.8.2
+
+### Improvements
+
+* **Thermostat and light group tiles** - a thermostat group's slider now shows its thermostats' target temperature,
+  and a light group's slider the lights' brightness. Both follow the devices as they report, including changes made
+  from elsewhere.
+
+### Fixes
+
+* **Light groups** - turning a light group on or off left the relays in it untouched; only the lights switched. Every
+  device in the group now follows, whatever its type. This applies to the group's tile and to group actions on buttons
+  and screen gestures.
+* **Roller groups** - after you pressed open or close on a roller group's tile, the tile either went back to rest
+  while the covers were still moving, or stayed lit with the pause button after they had stopped. The tile now
+  follows the covers as they report: it shows them moving until they stop, then moves its slider to where they
+  stopped, and goes back straight away if none of them can be reached.
+* **Cloud connection** - after the WiFi network dropped and came back, for example when the router restarted, the
+  display could stay disconnected from Shelly Cloud for hours, until it was restarted or Cloud was switched off and on
+  again. It now reconnects on its own as soon as the network is back.
 
 ## 2.8.1
 
@@ -209,8 +230,9 @@ With that covered, let's dive into the changelog.
       a plug that has been switched off, a device that has gone unreachable — says so straight away
       instead of waiting for the app to ask again. Power, voltage and current follow a few seconds behind
       rather than every second, since a plug measures itself continuously.
-      * On your own network, reading or controlling them still asks for the display's password or a Wall
-        Display pairing, exactly as before — worth setting a password if you have not.
+      * On your own network, reading or controlling them needs whatever your Wall Display normally needs -
+        its password, if you have set one - exactly like its relay. Without a password, anything on your
+        network can do both, so it is worth setting one if you have not.
       * Finding and pairing with another Wall Display stays a local-network job. That is a conversation
         between two panels in one home, and it is not offered over the internet.
       * Matter devices are not exposed over MQTT at all, neither their state nor their controls: a broker is
@@ -317,6 +339,7 @@ With that covered, let's dive into the changelog.
   actually recording. It is unavailable on a camera that is in privacy mode, and on a Wall Display without a
   microphone. It needs a camera whose firmware supports it: on one that does not, the camera is shown exactly
   as before and simply has no microphone button.
+* More information on Matter: [here](https://github.com/ShellyGroup/Wall-Display-Changelog/tree/main/matter)
 
 ### Improvements
 
