@@ -57,10 +57,37 @@ With that covered, let's dive into the changelog.
 
 | Stage  | Version |
 |:-------|:--------|
-| Stable | 2.8.2   |
+| Stable | 2.8.3   |
 | Beta   | none    |
 
 # CHANGELOG
+
+## 2.8.3
+
+### New features
+
+* **Circuit breakers** - Shelly Pro 1CB, 2CB, 3CB and 4CB circuit breakers can now be switched on and off from
+  their tiles, which also show the voltage, how many times the breaker has switched, and whether its safety lock is
+  on. While the latter is on, the tile cannot switch the breaker.
+
+### Improvements
+
+* **Software update message** - the message announcing a new software version now appears once for each version.
+  It used to come back every time the display reconnected, until you answered "No", and showed a short notice
+  after that. After it closes, whether you answered it or not, the dot on the Shelly logo stays to show that the
+  update is waiting.
+* **Screensaver** - the clock can now be chosen as the priority element when the display uses the 12-hour clock.
+* **Screensaver media player** - the player on the screensaver now has a background of its own.
+* **WiFi status over RPC** - `WiFi.GetStatus` now also reports the frequency of the connected network, in MHz, as
+  `freq`.
+
+### Fixes
+
+* **Software updates** - fixed an issue where the display could miss a new software version until it was restarted.
+* **Weather** - fixed an issue that might cause the weather tile to stop updating.
+* **Matter bridges** - fixed an issue where every device behind a large Matter bridge, such as a Philips Hue Bridge, showed as offline.
+* **Matter tiles** - fixed an issue where a tile for one channel of a Matter device showed its type, such as "Thermostat", instead of the device's name.
+* **Home Assistant** - fixed an issue where Home Assistant dashboards loaded slowly and kept reporting errors on modern devices.
 
 ## 2.8.2
 
@@ -339,7 +366,6 @@ With that covered, let's dive into the changelog.
   actually recording. It is unavailable on a camera that is in privacy mode, and on a Wall Display without a
   microphone. It needs a camera whose firmware supports it: on one that does not, the camera is shown exactly
   as before and simply has no microphone button.
-* More information on Matter: [here](https://github.com/ShellyGroup/Wall-Display-Changelog/tree/main/matter)
 
 ### Improvements
 
