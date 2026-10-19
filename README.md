@@ -57,10 +57,44 @@ With that covered, let's dive into the changelog.
 
 | Stage  | Version |
 |:-------|:--------|
-| Stable | 2.8.3   |
+| Stable | 2.8.4   |
 | Beta   | none    |
 
 # CHANGELOG
+
+## 2.8.4
+
+### Security Fixes
+
+* **Settings backup** - fixed an issue where restoring a specially crafted backup file could give an attacker 
+control of the display.
+* **Settings backup** - fixed an issue where restoring a backup file could change settings that are not part of 
+a backup.
+* **Shelly Cloud** - fixed an issue where the display did not verify that it was connecting to genuine Shelly servers.
+
+All of the above were reported by an independent security researcher under coordinated disclosure.
+
+### Improvements
+
+* **Matter thermostats and air conditioners** - their tiles can now switch between heating, cooling and automatic
+  mode, where the device supports more than one of them.
+* **Matter thermostats and air conditioners** - the target temperature on their tiles now changes in whole degrees.
+
+### Fixes
+
+* **Local web interface** - fixed an issue where a web page opened on another device on the same network could 
+read data from the display.
+* **Settings backup** - fixed an issue where the media volume was not restored from a backup.
+* **Settings backup** - fixed an issue where the "Always execute local actions" setting was not saved in backups.
+* **Settings backup** - fixed an issue where the home page sensor was not saved in backups.
+* **Software updates** - fixed an issue where the update notification showed only the version number instead of the 
+full build ID.
+* **Software updates** - fixed an issue where the display could refuse to install an update because of not enough
+  free space.
+* **Expandable tiles** - fixed an issue where the weather, media, Sonos and Zendure tiles could not be collapsed
+  in portrait mode after a restart.
+* **Roller tiles** - fixed an issue where a calibrated cover on a Shelly Pro 2Cover showed no position slider if
+  the device's other cover was not calibrated.
 
 ## 2.8.3
 
