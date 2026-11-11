@@ -57,10 +57,40 @@ With that covered, let's dive into the changelog.
 
 | Stage  | Version |
 |:-------|:--------|
-| Stable | 2.8.4   |
+| Stable | 2.8.5   |
 | Beta   | none    |
 
 # CHANGELOG
+
+## 2.8.5
+
+### Security Fixes
+
+* **Logs** - fixed an issue where the display's logs and crash reports could be downloaded without the device password.
+* **Logs** - fixed an issue where the display's logs could contain more information than they needed to.
+* **Logs** - fixed an issue where the display's live log could be watched without the device password.
+* **Media library** - fixed an issue where files in the media library could be downloaded without the device password.
+
+### New features
+
+* **WebView** - you can now install, update and switch between WebView implementations. Google WebView and Android
+  WebView are both available in the app store, and Settings -> About Device -> WebView shows the one in use and lets
+  you choose another. This is only available on modern devices.
+  * **N.B.** - Please make sure to install this update before installing any WebView from the app store.
+
+### Improvements
+
+* **Security updates** - this update allows installing security updates via the Android recovery system. The device
+  checks for them along with software updates and keeps offering a new one until it is installed. The first such
+  update will appear right after installing this one.
+* **Software updates** - the display now checks that there is enough free space for an update before downloading it.
+
+### Fixes
+
+* **Matter** - fixed an issue where Matter communication could not be enabled after restoring a settings backup from a
+newer version of the firmware after performing "Uninstall all updates".
+* **Shelly Cloud** - fixed an issue where the display could stay disconnected from Shelly Cloud after it was enabled.
+* **Bluetooth** - fixed an issue where the screen could stop responding while an external sensor was being connected.
 
 ## 2.8.4
 
